@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from "react";
-import VehicleDataService from "../services/VehicleService";
+import BookingDataService from "../services/BookingService";
 
-const Vehicle = (props) => {
-  const initialVehicleState = {
+const Booking = (props) => {
+  const initialBookingState = {
     id: null,
-    regNo: "",
-    description: "",
-    fuel: "",
-    bookingStatus: false,
-    charges: "",
+    vehicle_id: "",
+    user_id: "",
+    booking_date: "",
+    returning_date: "",
   };
-  const [currentVehicle, setCurrentVehicle] = useState(initialVehicleState);
+  const [currentBooking, setCurrentBooking] = useState(initialBookingState);
   const [message, setMessage] = useState("");
 
-  const getVehicle = (id) => {
-    VehicleDataService.get(id)
+  const getBooking = (id) => {
+    BookingDataService.get(id)
       .then((response) => {
-        setCurrentVehicle(response.data);
+        setCurrentBooking(response.data);
         console.log(response.data);
       })
       .catch((e) => {
@@ -25,27 +24,26 @@ const Vehicle = (props) => {
   };
 
   useEffect(() => {
-    getVehicle(props.match.params.id);
+    getBooking(props.match.params.id);
   }, [props.match.params.id]);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setCurrentVehicle({ ...currentVehicle, [name]: value });
+    setCurrentBooking({ ...currentBooking, [name]: value });
   };
 
   const updateBookingStatus = (status) => {
     var data = {
-      id: currentVehicle.id,
-      regNo: currentVehicle.regNo,
-      description: currentVehicle.description,
-      fuel: currentVehicle.fuel,
-      charges: currentVehicle.charges,
-      bookingStatus: true,
+      id: currentBooking.id,
+      vehicle_id: currentBooking.vehicle_id,
+      user_id: currentBooking.user_id,
+      booking_date: currentBooking.booking_date,
+      returning_date: currentBooking.returning_date,
     };
 
-    VehicleDataService.update(currentVehicle.id, data)
+    BookingDataService.update(currentBooking.id, data)
       .then((response) => {
-        setCurrentVehicle({ ...currentVehicle, published: status });
+        setCurrentBooking({ ...currentBooking, published: status });
         console.log(response.data);
       })
       .catch((e) => {
@@ -53,22 +51,22 @@ const Vehicle = (props) => {
       });
   };
 
-  const updateVehicle = () => {
-    VehicleDataService.update(currentVehicle.id, currentVehicle)
+  const updateBooking = () => {
+    BookingDataService.update(currentBooking.id, currentBooking)
       .then((response) => {
         console.log(response.data);
-        setMessage("The tutorial was updated successfully!");
+        setMessage("The booking was updated successfully!");
       })
       .catch((e) => {
         console.log(e);
       });
   };
 
-  const deleteVehicle = () => {
-    VehicleDataService.remove(currentVehicle.id)
+  const deleteBooking = () => {
+    BookingDataService.remove(currentBooking.id)
       .then((response) => {
         console.log(response.data);
-        props.history.push("/vehicles");
+        props.history.push("/bookings");
       })
       .catch((e) => {
         console.log(e);
@@ -77,42 +75,42 @@ const Vehicle = (props) => {
 
   return (
     <div>
-      {currentVehicle ? (
+      {currentBooking ? (
         <div className="edit-form">
-          <h4>Vehicle</h4>
+          <h4>Booking</h4>
           <form>
             <div className="form-group">
-              <label htmlFor="regNo">Reg No</label>
+              <label htmlFor="regNo">Vehicle No</label>
               <input
                 type="text"
                 className="form-control"
                 id="regNo"
                 name="regNo"
-                value={currentVehicle.regNo}
+                value={currentBooking.vehicle_id}
                 onChange={handleInputChange}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">user id</label>
               <input
                 type="text"
                 className="form-control"
                 id="description"
                 name="description"
-                value={currentVehicle.description}
+                value={currentBooking.user_id}
                 onChange={handleInputChange}
               />
             </div>
 
             <div className="form-group">
               <label>
-                <strong>Booking Status:</strong>
+                <strong>Booking Date:</strong>
               </label>
-              {currentVehicle.isBookingStatus ? "Booked" : "Pending"}
+              {currentBooking.isBookingStatus ? "Booked" : "Pending"}
             </div>
           </form>
 
-          {currentVehicle.isBookingStatus ? (
+          {currentBooking.isBookingStatus ? (
             <button
               className="badge badge-primary mr-2"
               onClick={() => updateBookingStatus(false)}
@@ -128,14 +126,14 @@ const Vehicle = (props) => {
             </button>
           )}
 
-          <button className="badge badge-danger mr-2" onClick={deleteVehicle}>
+          <button className="badge badge-danger mr-2" onClick={deleteBooking}>
             Delete
           </button>
 
           <button
             type="submit"
             className="badge badge-success"
-            onClick={updateVehicle}
+            onClick={updateBooking}
           >
             Update
           </button>
@@ -144,11 +142,11 @@ const Vehicle = (props) => {
       ) : (
         <div>
           <br />
-          <p>Please click on a Vehicle...</p>
+          <p>Please click on a Booking...</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Vehicle;
+export default Booking;
